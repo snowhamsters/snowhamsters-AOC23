@@ -1,0 +1,46 @@
+#include <iostream>
+#include <fstream>
+#include <math.h>
+#include <array>
+
+using namespace std;
+
+int main() {
+    int winningNumbers;
+    int cardNumber = 0;
+    int totalCards = 0;
+    int scratchcards[990] = {0};
+
+	ifstream file("input.txt");
+	string s;
+	while (getline(file, s)) {
+        cardNumber++;
+
+        s.erase(0,10);
+        s += " ";
+        cout<<s;
+
+        cout<<scratchcards[cardNumber];
+
+        for (int i=-1; i<scratchcards[cardNumber]; i++) {
+            winningNumbers = 0;
+
+            for (int j=0; j<30; j+=3) {
+                if (s.find(s.substr(j, 3),30) != string::npos) { winningNumbers++; }
+            }
+
+            for (int k=1; k<winningNumbers+1; k++) {
+                scratchcards[cardNumber+k] += 1;
+            }
+
+            totalCards += winningNumbers;
+        }
+        totalCards += 1;
+
+        cout<<"#: "<<winningNumbers<<" scratchcards: "<<totalCards<<" "<<endl;
+	}
+
+	cout<<endl<<"Total number of scratchcards: "<<totalCards<<endl;
+
+    return 0;
+}

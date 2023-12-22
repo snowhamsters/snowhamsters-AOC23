@@ -1,0 +1,7 @@
+# depslib dependency file v1.0
+1702078955 source:c:\users\mvpnoscar\documents\github\advent_of_code_2023\workspace\main.cpp
+	<iostream>
+	<fstream>
+	<math.h>
+	<array>
+

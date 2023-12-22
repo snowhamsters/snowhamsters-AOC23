@@ -1,0 +1,99 @@
+#include <iostream>
+#include <fstream>
+#include <cstring>
+#include <array>
+
+using namespace std;
+
+// X and Y size of 2d array from input
+const int INPUT_X = 140;
+const int INPUT_Y = 141;
+
+// Function to find the gear ratio from a given gear that has exactly two nearby part numbers
+float FindGearRatio(char c[INPUT_Y][INPUT_X], int y, int x) {
+    int startingX = x;
+    int startingY = y;
+    int gearCount = 0;
+    bool unaltered;
+
+    string number1 = "";
+    string number2 = "";
+
+    // Repeat for the two part numbers near the gear
+    for (int i=0; i<2; i++) {
+        // Reset x and y
+        x = startingX;
+        y = startingY;
+        unaltered = true;
+
+        // Check all 8 directions. Only alter x and y if it is the first part number.
+        if (isdigit(c[startingY][startingX+1]))   { gearCount++; if (unaltered) { x = x+1;          unaltered = false; } }
+        if (isdigit(c[startingY+1][startingX]))   { gearCount++; if (unaltered) { y = y+1;          unaltered = false; } }
+        if (isdigit(c[startingY][startingX-1]))   { gearCount++; if (unaltered) { x = x-1;          unaltered = false; } }
+        if (isdigit(c[startingY-1][startingX]))   { gearCount++; if (unaltered) { y = y-1;          unaltered = false; } }
+        if (isdigit(c[startingY+1][startingX+1])) { gearCount++; if (unaltered) { y = y+1; x = x+1; unaltered = false; } }
+        if (isdigit(c[startingY+1][startingX-1])) { gearCount++; if (unaltered) { y = y+1; x = x-1; unaltered = false; } }
+        if (isdigit(c[startingY-1][startingX+1])) { gearCount++; if (unaltered) { y = y-1; x = x+1; unaltered = false; } }
+        if (isdigit(c[startingY-1][startingX-1])) { gearCount++; if (unaltered) { y = y-1; x = x-1; unaltered = false; } }
+
+        // Stop if a gear does not have two part numbers
+        if ((i == 0) && (gearCount != 2)) {
+            return 0;
+        }
+
+        // If a digit is found, start at the leftmost digit and convert to a number
+        while (isdigit(c[y][x]) && x >= 0) {
+            x = x-1;
+        }
+        x = x+1;
+        while (isdigit(c[y][x]) && x <= INPUT_X) {
+            // Concatenate either number1 or number2
+            if (i == 0) { number1 += c[y][x]; }
+            else { number2 += c[y][x]; }
+            c[y][x] = '.'; // replace so it can't be found again
+            x = x+1;
+        }
+    }
+
+    // Return the two part numbers multiplied by eachother
+    return (stoi(number1) * stoi(number2));
+}
+
+int main() {
+    char charArray[INPUT_Y][INPUT_X];
+    int lineNumber = 0;
+
+    // File input to 2d char array
+	ifstream file("input.txt");
+	string s;
+	while (getline(file, s)) {
+        lineNumber++;
+        strcpy(charArray[lineNumber], s.c_str());
+	}
+
+    int sumOfGearRatio = 0;
+
+    for (int i=0; i<INPUT_Y; i++) {
+        for (int j=0; j<INPUT_X; j++) {
+            if (charArray[i][j] == '*') {
+                // Symbol detected!
+                sumOfGearRatio += FindGearRatio(charArray, i, j);
+                cout<<sumOfGearRatio<<" = ";
+            }
+        cout<<charArray[i][j];
+        }
+    cout<<endl;
+    }
+
+    // Print array
+    for (int i=0; i<INPUT_Y; i++) {
+        for (int j=0; j<INPUT_X; j++) {
+            cout<<charArray[i][j];
+        }
+        cout<<endl;
+    }
+
+    cout<<endl<<"Sum of part numbers in the engine: "<<sumOfGearRatio<<endl;
+
+    return 0;
+}
